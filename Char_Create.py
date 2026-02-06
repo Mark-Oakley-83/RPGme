@@ -1,25 +1,9 @@
 #AI generated code to be reviewed and verified before use
 import datetime
-
-class CharacterSheet:
-    def __init__(self, name, birthday):
-        self.profile = {
-            "name": name,
-            "birthday": birthday,  # Stored as a datetime object
-            "vocation": None,
-            "hobbies": []
-        }
-        
-        # Initializing Pillars with 0 for now (to be filled by the Interview)
-        self.attributes = {
-            "Physical Pillar": {"Strength": 0, "Fortitude": 0, "Dexterity": 0},
-            "Mental Pillar": {"Wisdom": 0, "Perception": 0, "Ingenuity": 0},
-            "Social Pillar": {"Emotional Intelligence": 0, "Composure": 0, "Conviction": 0},
-            "Worldly Pillar": {"Aura": 0}
-        }
+import Models
 
 def get_birthday():
-    """Prompts the user for birthday components and returns a datetime object."""
+    #Prompts the user for birthday components and returns a datetime object.
     while True:
         try:
             year = int(input("Enter birth year (YYYY): "))
@@ -37,7 +21,7 @@ def main():
     player_birthday = get_birthday()
 
     # Step 2: Initialize Permanent Object
-    character = CharacterSheet(player_name, player_birthday)
+    character = Models.CharacterSheet(player_name, player_birthday)
 
     print(f"\nCharacter '{character.profile['name']}' initialized.")
     print(f"Recorded Birthday: {character.profile['birthday']}")
