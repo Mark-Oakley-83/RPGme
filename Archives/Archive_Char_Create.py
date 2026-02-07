@@ -1,6 +1,6 @@
 #AI generated code to be reviewed and verified before use
 import datetime
-import Models
+import models
 
 def get_birthday():
     #Prompts the user for birthday components and returns a datetime object.
@@ -21,7 +21,7 @@ def main():
     player_birthday = get_birthday()
 
     # Step 2: Initialize Permanent Object
-    character = Models.CharacterSheet(player_name, player_birthday)
+    character = models.CreateCharacterSheet(player_name, player_birthday)
 
     print(f"\nCharacter '{character.profile['name']}' initialized.")
     print(f"Recorded Birthday: {character.profile['birthday']}")
