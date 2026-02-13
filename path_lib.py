@@ -1,0 +1,1 @@
+Save_path = "character_saves/"

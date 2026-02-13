@@ -7,7 +7,8 @@ import datetime
 def gather_name_birthday():
     #Handles the initial name and birthday entry.
     print("--- Please Create A Character Sheet ---")
-    name = input("Enter your name: ")
+    name = input("Enter your name: ").strip()
+
 
     while True:
         try:
