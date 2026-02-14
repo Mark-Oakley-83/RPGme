@@ -1,12 +1,43 @@
-from enter_name_birthday import gather_name_birthday
+import datetime
+from char_gen_models import CreateCharacterSheet, convert_dumb_results, convert_dumb_weight_to_attributes
 from new_char_interview import run_dumb_test
 
+#TODO this file should contain the commands to create the character, just calling instructions
+
 #Collect name and birthday
-char_name, char_bday = gather_name_birthday()
-#run the DUMB test and get the scores
-dumb_tally = run_dumb_test()
+def gather_name_birthday():
+    # Handles the initial name and birthday entry.
+    print("--- Please Create A Character Sheet ---")
+    name = input("Enter your name: ").strip()
+    while True:
+        try:
+            date_str = input("Enter birthday (YYYY-MM-DD): ")
+            birthday = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            today = datetime.date.today()
+            age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+            # return variables
+            return name, birthday, age
+        except ValueError:
+            print("Format error. Please use YYYY-MM-DD (e.g., 1990-05-15).")
+
+
+def gen_char_steps():
+        #get name and birthday and age of player
+    char_name, char_bday , char_age = gather_name_birthday()
+        #create the player_char dictionary that will eventually be written to a file.
+    player_char = CreateCharacterSheet(char_name, char_bday)
+        #zodiac signs assignment handled by char_gen_models.CreateCharacterSheet
+        #run the DUMB test and get the scores
+    dumb_tally = run_dumb_test()
+        #convert the talley to percentages
+    dumb_weights = convert_dumb_results(dumb_tally)
+        #declare and calculate the number of points
+    char_att_points = (int(char_age) - 15) * .75
+    char_skill_points = (int(char_age) - 15) * 3
+    player_char.attributes = convert_dumb_weight_to_attributes(dumb_weights, char_att_points, player_char.attributes)
+
+
 """
-#zodiac signs assignment
 #moon sign selection
 #gather vocation information
 #gather hobbies

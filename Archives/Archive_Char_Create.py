@@ -1,6 +1,6 @@
 #AI generated code to be reviewed and verified before use
 import datetime
-import models
+import char_gen_models
 
 def get_birthday():
     #Prompts the user for birthday components and returns a datetime object.

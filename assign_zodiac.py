@@ -1,3 +1,6 @@
+#TODO test
+import datetime
+
 def get_zodiac_sign(birthday):
     """Calculates the Zodiac sign based on a datetime.date object."""
     month = birthday.month
@@ -31,3 +34,12 @@ def get_zodiac_sign(birthday):
     #returned and can be dealt with
     else:
         return "Error: no Zodiac assigned"
+
+if __name__ == "__main__":
+    try:
+        test_date_str = input("Enter birthday (YYYY-MM-DD): ")
+        test_birthday = datetime.datetime.strptime(test_date_str, "%Y-%m-%d").date()
+        print(get_zodiac_sign(test_birthday))
+
+    except ValueError:
+        print("Format error. Please use YYYY-MM-DD (e.g., 1990-05-15).")
