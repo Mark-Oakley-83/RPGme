@@ -11,9 +11,7 @@ def main():
     #Launch main menu
     action = display_menu()
     if action == "new": #launch character creation process
-
         player_character = gen_char_steps()
-
         print(f"\nSuccessfully created: {player_character.profile['name']}")
 
 

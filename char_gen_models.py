@@ -2,21 +2,22 @@
 # char_gen_models.py
 #TODO this code should only be for the backend steps for the character creation
 import math
-
-from pycparser.c_ast import Return
-
 from assign_zodiac import get_zodiac_sign
+from char_gen_vocations import vocation_questions
 from data import TOTAL_PLAYER_INTERVIEW_HITS
+from generate_char import gather_name_birthday, select_moon_sign, char_creation_hobbies
+from new_char_interview import run_dumb_test
 
 
 class CreateCharacterSheet:
-    def __init__(self, name, birthday):
+    def __init__(self, name, birthday, age):
         self.profile = {
             "name": name,
             "birthday": birthday,
             "zodiac": get_zodiac_sign(birthday),  # Automatic assignment
-            #"age": age_calculation
-            "active_vocation": [],
+            "age": age,
+            "moon_sign": "",
+            "active_vocations": [],
             "retired_vocations": [],  # New list for previous roles
             "hobbies": [],
             "foundation": None # e.g., "Academic", "Trade", or "Street"
@@ -34,42 +35,71 @@ class CreateCharacterSheet:
             "Training Pool": {"Coordination": 0, "Technique": 0, "Maintenance": 0},
             "Scholarship Pool": {"Research": 0, "Analysis": 0, "Instruction": 0}
         }
-        self.active_vocation = []
-        self.retired_vocations = []
-        self.hobbies = []
 
+def gen_char_steps():
+        # get name and birthday and age of player
+    char_name, char_bday, char_age = gather_name_birthday()
+        # create the player_char dictionary that will eventually be written to a file.
+    player_char = CreateCharacterSheet(char_name, char_bday, char_age)
+        # zodiac signs assignment handled by char_gen_models.CreateCharacterSheet
+        # run the DUMB test and get the scores
+    dumb_tally = run_dumb_test()
+        # convert the talley to percentages
+    dumb_weights = convert_dumb_results(dumb_tally)
+        # declare and calculate the number of points
+    char_att_points = int((int(char_age) - 15) * .75)
+    #char_skill_points = (int(char_age) - 15) * 3
+    player_char.attributes = convert_dumb_weight_to_attributes(dumb_weights, char_att_points)
+    # allow the player to choose a moon sign
+    player_char.profile["moon_sign"] = select_moon_sign()
+    #begin vocation creation
+    player_char.profile["active_vocations"] = vocation_questions(player_char.profile["active_vocations"], "active")
+        #set up retired vocations
+    player_char.profile["retired_vocations"] = vocation_questions(player_char.profile["retired_vocations"], "retired")
+        #setup hobbies
+    player_char.profile["hobbies"] = char_creation_hobbies(player_char.profile["hobbies"])
 
-
-def add_vocation(char_obj, new_vocation):
+def add_vocation(vocation_list, new_vocation):
     """Adds a vocation only if the character has fewer than 3."""
-    if len(char_obj.profile["active_vocations"]) < 3:
-        char_obj.profile["active_vocations"].append(new_vocation)
+    if len(vocation_list) < 3:
+        vocation_list.append(new_vocation)
+        return True
     else:
-        print("Maximum active vocations (3) reached.")
+        return False
 
-def retire_vocation(char_obj, vocation_name):
-    if vocation_name in char_obj.profile["active_vocations"]:
-        # 2. Add to retired list
-        char_obj.profile["retired_vocations"].append(vocation_name)
-        # 1. Remove from active list
-        char_obj.profile["active_vocations"].remove(vocation_name)
-        print(f"{vocation_name} has been retired.")
+def retire_vocation(active_list, retired_list, vocation_name):
+    if vocation_name in active_list:
+        #Add to retired list
+        retired_list.append(vocation_name)
+        #Remove from active list
+        active_list.remove(vocation_name)
+        return active_list, retired_list
     else:
-        print(f"Error: {vocation_name} is not currently an active vocation.")
+        return False
+
+def remove_vocation(vocation_list, job_to_delete):
+    if job_to_delete in vocation_list:
+        vocation_list.remove(job_to_delete)
+        return True
+    else:
+        return False
 
 def convert_dumb_results(results):
     #converts weights from numbers to percentages
     dumb_percents = {key: (value / TOTAL_PLAYER_INTERVIEW_HITS) * 100 for key, value in results.items()}
-    Return (dumb_percents)
+    return dumb_percents
 
-def convert_dumb_weight_to_attributes(weights, avail_points, start_attribs):
+def convert_dumb_weight_to_attributes(weights, avail_points):
     #converts the weights from the above function to actual points
     #declare variables
     assigned_points = {}
     remainders = {}
     total_assigned = 0
+    #while there is an attribute to adjust, run each in order
     for attr, weight in weights.items():
         exact_value = (weight / 100) * avail_points
+        if exact_value > 8:
+           exact_value = 8
         assigned_points[attr] = math.floor(exact_value)
         remainders[attr] = exact_value - assigned_points[attr]
         total_assigned += assigned_points[attr]
@@ -81,14 +111,22 @@ def convert_dumb_weight_to_attributes(weights, avail_points, start_attribs):
     for i in range(leftover):
         attr_to_boost = sorted_by_remainder[i][0]
         assigned_points[attr_to_boost] += 1
-    #TODO make a soft cap of 8 and redistribure those points
-    #TODO make these points leveled first point = 1xp, second point =2xp etc
-
+#TODO think about making these points leveled: first point = 1xp, second point =2xp etc
     return assigned_points
 
+def standardize_hobby(name, skills, last_used, years_used):
+    #standarize the hobby entries
+    return {
+        "name": name,
+        "skills": skills,  # Expecting a list like ["Electronics", "Math"]
+        "last_used": int(last_used),
+        "years_active": int(years_used)
+    }
 
-#todo
+
 """
+#todo
+
     def add_hobby(self, new_hobby):
         self.profile["hobbies"].append(new_hobby)
 

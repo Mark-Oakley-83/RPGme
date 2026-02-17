@@ -1,4 +1,4 @@
-#TODO test
+#tested
 import datetime
 
 def get_zodiac_sign(birthday):

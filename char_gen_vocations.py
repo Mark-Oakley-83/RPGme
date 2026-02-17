@@ -15,36 +15,56 @@ def get_data_by_level(filename, level_column, prefix):
     return items
 
 
-def vocation_questions():
-    print("""
-    Let's set up your jobs and descriptions...
-    This will determine your starting skills and other features.
-    Since there are so many job descriptions available, we will use the government's choices.
-    Because we all know the government is paid to be efficient and accurate.
-    (If you have a very very unusual job, we can deal with that in another step, for now....
-     """)
+def vocation_questions(player_vocations, voc_type):
+    if voc_type == 'retired':
+        print(f"""
+            Let's set up your old jobs and descriptions...
+            These will give you credit for jobs you have done in the past.
+            Since there are so many job descriptions available, we will use the government's choices.
+            Because we all know the government is paid to be efficient and accurate.
+            (If you have a very very unusual job, we can deal with that in another step, for now....
+             """)
+    else:
+        print(f"""
+            Let's set up your jobs and descriptions...
+            This will determine your starting skills and other features.
+            Since there are so many job descriptions available, we will use the government's choices.
+            Because we all know the government is paid to be efficient and accurate.
+            (If you have a very very unusual job, we can deal with that in another step, for now....
+             """)
+
+
     while True:
-        try:
-            num_of_jobs = input("\nHow many jobs do you have? please enter 1,2,or 3: ")
+        if voc_type == 'active':
+            try:
+                num_of_jobs = input("\nHow many jobs do you have currently? please enter 1,2,or 3: ")
+                num_of_jobs = int(num_of_jobs)
+                if num_of_jobs > 3:
+                    print("Since we can only list 3 jobs on the character sheet \n please use just the 3 you work the most, \nand we will list the others as hobbies for now.")
+                    num_of_jobs = 3
+                    break
+
+                elif num_of_jobs < 1:
+                    print("Please enter a number between 1 and 3.")
+                else:
+                    # Valid input received! Break the loop to continue the rest of the program
+                    break
+            except ValueError:
+                print("Please enter 1,2 or 3: ")
+        else:
+            num_of_jobs = input("\nHow many old jobs would you like to add to the retired list?")
             num_of_jobs = int(num_of_jobs)
-            if num_of_jobs > 3:
-                print("Please enter up to 3; if you have more than 3, please choose 3 and we will work with it.")
-                # The loop continues because we haven't 'broken' out yet
-            elif num_of_jobs < 1:
-                print("Please enter a number between 1 and 3.")
-            else:
-                # Valid input received! Break the loop to continue the rest of the program
-                break
-        except ValueError:
-            print("Please enter 1,2 or 3: ")
+            break
+    print("\n We will do this in layers for each job.")
     major_prefix = 00
     minor_prefix = ""
     broad_prefix = ""
-    while int("num_of_jobs") >= 1:
-        # 1. Load the data
+    run_through = 1
+    while num_of_jobs >= 1:
+        #Load the data
         major_list = get_data_by_level(data.SOC_FILENAME, "Major Group", "")
-        # 2. Display the prompt and the list
-        print("Which Major Category would your job fall under?\n")
+        #Display the prompt and the list
+        print(f"Which Major Category would job your #{run_through} job fall under?\n")
         for i, group in enumerate(major_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -62,7 +82,7 @@ def vocation_questions():
 
         minor_list = get_data_by_level(data.SOC_FILENAME, "Minor Group", major_prefix)
         # 2. Display the prompt and the list
-        print("Which Minor Category would your job fall under?\n")
+        print(f"Which Minor Category would your #{run_through} job fall under?\n")
         for i, group in enumerate(minor_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -80,7 +100,7 @@ def vocation_questions():
 
         broad_list = get_data_by_level(data.SOC_FILENAME, "Broad Group", minor_prefix)
         # 2. Display the prompt and the list
-        print("Which Broad Category would your job fall under?\n")
+        print(f"Which Broad Category would your #{run_through} job fall under?\n")
         for i, group in enumerate(broad_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -98,7 +118,7 @@ def vocation_questions():
 
         job_list = get_data_by_level(data.SOC_FILENAME, "name", broad_prefix)
         # 2. Display the prompt and the list
-        print("Which best describes your job?\n")
+        print(f"Which best describes your #{run_through} job?\n")
         for i, group in enumerate(job_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -114,6 +134,12 @@ def vocation_questions():
         except ValueError:
             print("Please enter a valid number.")
 
-        add_vocation(job_number)
-
+        can_add = add_vocation(player_vocations, job_number)
+        if not can_add:
+            print("Maximum active vocations (3) reached.")
+        else:
+            print(f"Success! {job_number} added to your active vocations.")
+        run_through += 1
         num_of_jobs -= 1
+    return player_vocations
+
