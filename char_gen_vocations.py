@@ -1,11 +1,10 @@
 import csv
 import data
-from char_gen_models import add_vocation
 
 
 def get_data_by_level(filename, level_column, prefix):
     items = []
-    with open(filename, mode='r', encoding='utf-8') as f:
+    with open(filename, mode='r', encoding='utf-8-sig', errors='replace') as f:
         reader = csv.DictReader(f)
         for row in reader:
             code = row[level_column]
@@ -51,7 +50,7 @@ def vocation_questions(player_vocations, voc_type):
                     break
             except ValueError:
                 print("Please enter 1,2 or 3: ")
-        else:
+        elif voc_type == 'retired':
             num_of_jobs = input("\nHow many old jobs would you like to add to the retired list?")
             num_of_jobs = int(num_of_jobs)
             break
@@ -60,6 +59,7 @@ def vocation_questions(player_vocations, voc_type):
     minor_prefix = ""
     broad_prefix = ""
     run_through = 1
+    years = 0
     while num_of_jobs >= 1:
         #Load the data
         major_list = get_data_by_level(data.SOC_FILENAME, "Major Group", "")
@@ -82,7 +82,7 @@ def vocation_questions(player_vocations, voc_type):
 
         minor_list = get_data_by_level(data.SOC_FILENAME, "Minor Group", major_prefix)
         # 2. Display the prompt and the list
-        print(f"Which Minor Category would your #{run_through} job fall under?\n")
+        print(f"Which Minor Category would your #{run_through} {voc_type} job fall under?\n")
         for i, group in enumerate(minor_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -100,7 +100,7 @@ def vocation_questions(player_vocations, voc_type):
 
         broad_list = get_data_by_level(data.SOC_FILENAME, "Broad Group", minor_prefix)
         # 2. Display the prompt and the list
-        print(f"Which Broad Category would your #{run_through} job fall under?\n")
+        print(f"Which Broad Category would your #{run_through} {voc_type} job fall under?\n")
         for i, group in enumerate(broad_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -116,9 +116,9 @@ def vocation_questions(player_vocations, voc_type):
         except ValueError:
             print("Please enter a valid number.")
 
-        job_list = get_data_by_level(data.SOC_FILENAME, "name", broad_prefix)
+        job_list = get_data_by_level(data.SOC_FILENAME, "Detailed Occupation", broad_prefix)
         # 2. Display the prompt and the list
-        print(f"Which best describes your #{run_through} job?\n")
+        print(f"Which best describes your #{run_through} {voc_type} job?\n")
         for i, group in enumerate(job_list, 1):
             print(f"{i}. {group['name']}")
         # 3. Get User Input
@@ -128,18 +128,36 @@ def vocation_questions(player_vocations, voc_type):
             if 0 <= choice_idx < len(job_list):
                 selected_job = job_list[choice_idx]
                 print(f"\nYou selected: {selected_job['name']} ")
-                job_number = selected_job["Detailed Occupation"]
+                job_number = selected_job["name"]
+                if voc_type == 'retired':
+                    years = input(f"How many years were you a {selected_job["name"]}? ")
+                elif voc_type == 'active':
+                    years = input(f"How many years have you been a you a {selected_job["name"]}? ")
             else:
                 print("Invalid selection.")
         except ValueError:
             print("Please enter a valid number.")
 
-        can_add = add_vocation(player_vocations, job_number)
-        if not can_add:
+        can_add = add_vocation(player_vocations, job_number, years)
+        if not can_add and voc_type == "active":
             print("Maximum active vocations (3) reached.")
         else:
             print(f"Success! {job_number} added to your active vocations.")
         run_through += 1
         num_of_jobs -= 1
+
     return player_vocations
 
+def add_vocation(vocation_list, new_vocation, years):
+    """Adds a vocation only if the character has fewer than 3."""
+    if len(vocation_list) <= 3:
+        vocation_list.append({"name": new_vocation, "years": years})
+        return True
+    else:
+        return False
+
+if __name__ == "__main__":
+    test_player_vocations=[]
+    test_voc_type = input("active or retired: ")
+    test_player_vocations = vocation_questions(test_player_vocations, test_voc_type)
+    print (test_player_vocations)

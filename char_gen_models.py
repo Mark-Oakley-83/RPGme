@@ -1,11 +1,13 @@
 #AI Generated code to be verified
 # char_gen_models.py
-#TODO this code should only be for the backend steps for the character creation
+#this code should only be for the backend steps for the character creation
 import math
+
+#from Skill_models import char_creation_skills
 from assign_zodiac import get_zodiac_sign
 from char_gen_vocations import vocation_questions
 from data import TOTAL_PLAYER_INTERVIEW_HITS
-from generate_char import gather_name_birthday, select_moon_sign, char_creation_hobbies
+from generate_char import gather_name_birthday, select_moon_sign, char_creation_hobbies, char_creation_foundation
 from new_char_interview import run_dumb_test
 
 
@@ -48,7 +50,7 @@ def gen_char_steps():
     dumb_weights = convert_dumb_results(dumb_tally)
         # declare and calculate the number of points
     char_att_points = int((int(char_age) - 15) * .75)
-    #char_skill_points = (int(char_age) - 15) * 3
+    char_skill_points = (int(char_age) - 15) * 3
     player_char.attributes = convert_dumb_weight_to_attributes(dumb_weights, char_att_points)
     # allow the player to choose a moon sign
     player_char.profile["moon_sign"] = select_moon_sign()
@@ -58,14 +60,12 @@ def gen_char_steps():
     player_char.profile["retired_vocations"] = vocation_questions(player_char.profile["retired_vocations"], "retired")
         #setup hobbies
     player_char.profile["hobbies"] = char_creation_hobbies(player_char.profile["hobbies"])
+        #determine how the player lived his life e.g., "Academic", "Trade", or "Street"
+    player_char.profile["foundation"] = char_creation_foundation(player_char.profile["foundation"])
+        #assign skills
+    #player_char.skills = char_creation_skills(player_char.skills, char_age, char_skill_points, player_char.profile["active_vocations"], player_char.profile["retired_vocations"], player_char.profile["hobbies"], player_char.profile["foundation"])
 
-def add_vocation(vocation_list, new_vocation):
-    """Adds a vocation only if the character has fewer than 3."""
-    if len(vocation_list) < 3:
-        vocation_list.append(new_vocation)
-        return True
-    else:
-        return False
+
 
 def retire_vocation(active_list, retired_list, vocation_name):
     if vocation_name in active_list:

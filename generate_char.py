@@ -58,7 +58,7 @@ def char_creation_hobbies(hobbies_list):
           """)
     another_hobby = "Y"
     while another_hobby == "Y":
-        name = input("Please enter a hobby: ")
+        name = input("Please enter a hobby: (i.e. kayaking, 3D printing, electronics repair) ")
         raw_skills = input("Please enter up to 3 skills you use with this hobby: (Separate them with commas Alertness,Research,...): ")
             # set the skills to Title case, strips extra spaces at the beginning and end of each skill, and removed empty skills
         clean_skills = [skill.strip().title() for skill in raw_skills.split(",") if skill.strip()]
@@ -68,17 +68,27 @@ def char_creation_hobbies(hobbies_list):
         hobbies_list.append(new_hobby)
         another_hobby = input("Would you like to add another hobby? Y/N ").upper()
 
-
-
+def char_creation_foundation(foundation):
+    print("""
+    Quick question: How did you grow up?
+    1) I went to high school, then went off to college, and have (or will have) a degree and nice job.
+    2) I did ok in high school, or dropped out, then got a technical certification and went to work.
+    3) I did the whole high school thing (or didn't) and decided to learn my trade through grit and experience.
+    If none of these fit you, just pick the one that's most like your life currently.
+    """)
+    choice = input("Which of these fits you best? (please enter 1,2, or 3)")
+    if choice == "1":
+        foundation = "Academic"
+    if choice == "2":
+        foundation = "Trade"
+    if choice == "3":
+        foundation = "Street"
+    return foundation
 
 
 """
 
-    4. Next run the vocation collector
-     player_character.profile["active_vocation"] = initial_active_vocation_questions
-     player_character.profile["retired_vocation"] = initial_retired_vocation_questions
-    5. Run the Hobbies Questionaire
-    6. Gather wieghts from the above functions
+    Gather wieghts from the above functions
     active_vocation_weight = weigh_vocation(active, player_character.profile["active_vocation"])
     retired_vocation_weight = weigh_vocation(retired, player_character.profile["retired_vocation"])
     7. Apply weights to the points collected from age
