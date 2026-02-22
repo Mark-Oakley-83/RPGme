@@ -32,10 +32,20 @@ class CreateCharacterSheet:
             "Worldly Pillar": {"Aura": 2}
         }
         #List of universal skills set to 0 for base creation path
-        self.skills = {
+        self.universal_skills = {
             "Instinct Pool": {"Alertness": 0, "Social Cues": 0, "Intuition": 0},
             "Training Pool": {"Coordination": 0, "Technique": 0, "Maintenance": 0},
             "Scholarship Pool": {"Research": 0, "Analysis": 0, "Instruction": 0}
+        }
+        self.voc_skills ={
+            "Instinct Pool": {},
+            "Training Pool": {},
+            "Scholarship Pool": {}
+        }
+        self.hobby_skills = {
+            "Instinct Pool": {},
+            "Training Pool": {},
+            "Scholarship Pool": {}
         }
 
 def gen_char_steps():
@@ -50,7 +60,6 @@ def gen_char_steps():
     dumb_weights = convert_dumb_results(dumb_tally)
         # declare and calculate the number of points
     char_att_points = int((int(char_age) - 15) * .75)
-    char_skill_points = (int(char_age) - 15) * 3
     player_char.attributes = convert_dumb_weight_to_attributes(dumb_weights, char_att_points)
     # allow the player to choose a moon sign
     player_char.profile["moon_sign"] = select_moon_sign()
@@ -59,13 +68,14 @@ def gen_char_steps():
         #set up retired vocations
     player_char.profile["retired_vocations"] = vocation_questions(player_char.profile["retired_vocations"], "retired")
         #setup hobbies
-    player_char.profile["hobbies"] = char_creation_hobbies(player_char.profile["hobbies"])
+    player_char.profile["hobbies"] = char_creation_hobbies(player_char.profile["hobbies"], player_char.universal_skills, player_char.hobby_skills)
         #determine how the player lived his life e.g., "Academic", "Trade", or "Street"
     player_char.profile["foundation"] = char_creation_foundation(player_char.profile["foundation"])
+        #determine skill weights
+    #skill_weights = skill_weight_calc(player_char.profile)
+
         #assign skills
     #player_char.skills = char_creation_skills(player_char.skills, char_age, char_skill_points, player_char.profile["active_vocations"], player_char.profile["retired_vocations"], player_char.profile["hobbies"], player_char.profile["foundation"])
-
-
 
 def retire_vocation(active_list, retired_list, vocation_name):
     if vocation_name in active_list:
@@ -111,7 +121,7 @@ def convert_dumb_weight_to_attributes(weights, avail_points):
     for i in range(leftover):
         attr_to_boost = sorted_by_remainder[i][0]
         assigned_points[attr_to_boost] += 1
-#TODO think about making these points leveled: first point = 1xp, second point =2xp etc
+#point of consideration - think about making these points leveled: first point = 1xp, second point =2xp etc
     return assigned_points
 
 def standardize_hobby(name, skills, last_used, years_used):
@@ -123,18 +133,18 @@ def standardize_hobby(name, skills, last_used, years_used):
         "years_active": int(years_used)
     }
 
+#todo def skill_weight_calc(player_profile):
+"""
+    assigned_points = {}
+    remainders = {}
+    total_assigned = 0
+    char_skill_points = (int(player_profile["age"]) - 15) * 3"""
 
 """
-#todo
-
-    def add_hobby(self, new_hobby):
-        self.profile["hobbies"].append(new_hobby)
-
+todo
 
 Needs:
-add_retired_initial #adds inital retired vocations without the check to see if they were already active
-initial_active_vocation_questions #separate file?
-initial_retired_vocation_questions #separate file?
+def skill_weight_calc():
 create_custom_vocation_tool
 ??export_customizations_to_email?
 append_vocation
