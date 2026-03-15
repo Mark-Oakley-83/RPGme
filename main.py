@@ -1,10 +1,8 @@
 #this is VERY much a work in progress and many of these files have not been created yet
-from generate_char import gen_char_steps
-
 #Welcome message
 print("Hello, welcome to RPGme.  Let me boot up quick...")
 #imports
-from generate_char import gen_char_steps
+from char_gen_models import gen_char_steps
 from main_menu import display_menu
 
 def main():

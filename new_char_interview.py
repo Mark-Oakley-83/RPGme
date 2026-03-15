@@ -16,8 +16,12 @@ def run_dumb_test():
 ----------------- WELCOME TO THE D.U.M.B. TEST -----------------
 --------------(Definitive Universal Metric Battery)-------------
 --Please answer all questions honestly for accurate profiling.--
-__________________We will be watching (-)>(-)___________________
-    ------------------------------------------------------------
+_____________________We will be watching.. _____________________
+
+__________________________   (-)>(-)   _________________________
+
+    --------------------------------------------------------
+
 Question {id}: {text}
 
 A) {A_text}
