@@ -78,7 +78,7 @@ def skill_weight_calc(player_sheet):
         for skill, skill_data in pool_dict.items():
             is_active = (int(skill_data['last_used']) == CURRENT_YEAR)
             tenure = int(skill_data['Years_Active'])
-            years_since_active = (int(skill_data['last_used'] - CURRENT_YEAR))
+            years_since_active = (int(skill_data['last_used']) - CURRENT_YEAR)
             adjust = 0
             if tenure <= 5: adjust = 1
             elif 6 <= tenure <= 10: adjust = 3
@@ -149,15 +149,16 @@ def skill_weight_calc(player_sheet):
     for update_skill, tally in assigned_points.items():
         categories = ["universal_skills", "voc_skills", "hobby_skills"]
         for cat in categories:
-            for pool in player_sheet.profile[cat]:
-                skill_box = player_sheet.profile[cat][pool]
+            skill_category = getattr(player_sheet, cat)
+            for pool_name, pool_dict in skill_category.items():
+                if update_skill in pool_dict:
+                    skill_box = pool_dict[update_skill]
                 # Check if the skill belongs in this specific pool
-                if update_skill in skill_box:
                     if tally >= 11:
-                        skill_box[update_skill] = tally - 10
-                        player_sheet.skill_master.append(update_skill)
+                        skill_box['level'] = tally - 10
+                        player_sheet.skill_master.add(update_skill)
                     else:
-                        skill_box[update_skill] = tally
+                        skill_box['level'] = tally
                     break
 
 

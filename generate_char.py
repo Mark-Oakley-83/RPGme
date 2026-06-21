@@ -59,7 +59,6 @@ def char_creation_hobbies(hobbies_list, universal_skills, hobby_skills, vocation
     --Coordination    Technique       Maintenance
     --Research        Analysis        Instruction
     """)
-    print(f"You have also already added:"
     print("You have also already added:")
     for pool_name, skills_dict in vocation_skills.items():
         print(f"\n[{pool_name}]")
@@ -74,7 +73,7 @@ def char_creation_hobbies(hobbies_list, universal_skills, hobby_skills, vocation
 
     another_hobby = "Y"
     while another_hobby == "Y":
-        name = input("Please enter a hobby you would like to add: (i.e. kayaking, 3D printing, electronics repair) ") #ask for a hobby name
+        name = input("Please enter a hobby you would like to add: (i.e. kayaking, 3D printing, electronics repair): ") #ask for a hobby name
         raw_skills = input(f"Please enter up to 3 skills you use with this hobby, {name}: (Separate them with commas Alertness,Research,...): ") #ask for a set of skills
             # set the skills to Title case, strips extra spaces at the beginning and end of each skill, and removed empty skills
         clean_skills = [skill.strip().title() for skill in raw_skills.split(",") if skill.strip()]
@@ -118,7 +117,7 @@ def char_creation_hobbies(hobbies_list, universal_skills, hobby_skills, vocation
                 target_pillar = pillar_map.get(pillar_choice)
                 if target_pool:
                     if max_skills_check(hobby_skills, target_pool):
-                        hobby_skills[target_pool][skill] = {"level": 0, "pillar": target_pillar, "pool": target_pool,"Last Used": last_used, "Years_Active": years_active}
+                        hobby_skills[target_pool][skill] = {"level": 0, "pillar": target_pillar, "pool": target_pool,"last_used": last_used, "Years_Active": years_active}
                     else:
                         print("Sorry that skill was not added, there was an error.")
                         continue
@@ -136,7 +135,7 @@ Quick question: How did you grow up?
 4) I joined the military at a early age and got my training and experience from that.
 If none of these fit you, just pick the one that's most like your life currently.
 """)
-    choice = input("Which of these fits you best? (please enter 1,2, 3, or 4)")
+    choice = input("Which of these fits you best? (please enter 1,2, 3, or 4): ")
     if choice == "1":
         foundation = "Academic"
     if choice == "2":

@@ -94,7 +94,7 @@ class CreateCharacterSheet:
             "Training Pool": {},
             "Scholarship Pool": {}
         }
-        self.skill_master = {}
+        self.skill_master = set()
 
 def gen_char_steps():
         # get name and birthday and age of player
@@ -125,6 +125,7 @@ def gen_char_steps():
         player_char.attributes["Worldly Pillar"]["Aura"] += 1
         #determine skill weights
     skill_weight_calc(player_char)
+    return player_char
 
 def retire_vocation(active_list, retired_list, vocation_name):
     if vocation_name in active_list:
